@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String    @id @default(cuid())
+  clerkId         String    @unique
+  email           String    @unique
+  name            String?
+  imageUrl        String?
+  leetcodeUsername String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  profile          Profile?
+  dailyGoals       DailyGoal[]
+  studyPlans       StudyPlan[]
+  problemHistories ProblemHistory[]
+  contestHistories ContestHistory[]
+  bookmarks        Bookmark[]
+  revisionSchedules RevisionSchedule[]
+  aiConversations  AIConversation[]
+}
+
+model Profile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  leetcodeUsername  String?
+  realName         String?
+  country          String?
+  institution      String?
+  avatarUrl        String?
+  aboutMe          String?
+
+  totalSolved      Int      @default(0)
+  easySolved       Int      @default(0)
+  mediumSolved     Int      @default(0)
+  hardSolved       Int      @default(0)
+  totalSubmissions Int      @default(0)
+  acceptanceRate   Float    @default(0)
+  ranking          Int      @default(0)
+  contributionPoints Int    @default(0)
+  reputation       Int      @default(0)
+
+  currentStreak    Int      @default(0)
+  maxStreak        Int      @default(0)
+  contestRating    Float    @default(0)
+  contestGlobalRank Int     @default(0)
+  contestAttended  Int      @default(0)
+
+  lastSynced       DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model DailyGoal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime @default(now())
+  targetCount Int      @default(3)
+  completed   Int      @default(0)
+  topics      String[]
+  difficulty  String?
+  notes       String?
+  isCompleted Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudyPlan {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  topics      String[]
+  difficulty  String?
+  status      String   @default("active")
+  progress    Float    @default(0)
+  aiGenerated Boolean  @default(false)
+  planData    Json?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProblemHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId    Int
+  problemTitle String
+  problemSlug  String
+  difficulty   String
+  topics       String[]
+  status       String
+  language     String
+  runtime      String?
+  memory       String?
+  submittedAt  DateTime
+
+  createdAt    DateTime @default(now())
+}
+
+model ContestHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contestTitle  String
+  contestSlug   String
+  ranking       Int
+  score         Int
+  problemsSolved Int
+  totalProblems  Int
+  rating        Float
+  ratingChange  Float?
+  attendedAt    DateTime
+
+  createdAt     DateTime @default(now())
+}
+
+model Bookmark {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId   Int
+  problemTitle String
+  problemSlug String
+  difficulty  String
+  topics      String[]
+  notes       String?
+  isCompleted Boolean  @default(false)
+  priority    String   @default("medium")
+  company     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, problemId])
+}
+
+model RevisionSchedule {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId     Int
+  problemTitle  String
+  problemSlug   String
+  difficulty    String
+  topics        String[]
+
+  nextReviewAt  DateTime
+  interval      Int      @default(1)
+  easeFactor    Float    @default(2.5)
+  repetitions   Int      @default(0)
+  status        String   @default("pending")
+  lastReviewedAt DateTime?
+  notes         String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title     String   @default("New Conversation")
+  messages  Json[]
+  context   String?
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
