@@ -8,7 +8,7 @@
 [![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%203.6%20Flash-8e44ad?style=for-the-badge)](https://ai.google.dev/)
 [![Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ecf8e?style=for-the-badge&logo=supabase)](https://supabase.com)
 
-🔗 **Live Production Demo**: [https://leetflow.vercel.app](https://leetflow.vercel.app)
+🔗 **Live Production Demo**: [https://leetflow.vercel.app](https://leetflow-ruby.vercel.app/)
 
 **LeetFlow** is a modern, AI-powered Data Structures & Algorithms (DSA) platform designed for competitive programmers and software engineering interview candidates. It connects with your official LeetCode profile to analyze your performance, generate optimal solutions in 9+ languages, audit line-by-line Big-O time and space complexity, build progressive 7-day study roadmaps, and synchronize user data across all devices via Supabase PostgreSQL.
 
