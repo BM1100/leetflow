@@ -13,6 +13,16 @@
 
 ---
 
+## 👨‍💻 Developer & Maintainer
+
+Designed and developed with ❤️ by **Bhagya Majithiya**.
+
+* **📧 Email**: [thakkarbhagya65@gmail.com](mailto:thakkarbhagya65@gmail.com)
+* **🐙 GitHub**: [@BM1100](https://github.com/BM1100)
+* **💼 LinkedIn**: [Bhagya Majithiya](https://www.linkedin.com/in/bhagya-majithiya-05654336b)
+
+---
+
 ## 🌟 Key Features
 
 * **⚡ AI Problem Solver**: Generates optimal code solutions in 9+ languages (Python, C++, Java, JS, TS, Go, Rust, C#, SQL) with step-by-step intuition and edge cases. Includes C++ optimization (omitting redundant headers for clean LeetCode submission).
@@ -31,7 +41,7 @@
 * **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
 * **AI Engine**: [Google Gemini AI API (`@google/genai`)](https://ai.google.dev/)
 * **Authentication**: [Clerk Auth](https://clerk.com/)
-* **Database & ORM**: [Prisma ORM](https://www.prisma.io/) & PostgreSQL
+* **Database & ORM**: [Prisma ORM](https://www.prisma.io/) & PostgreSQL (Supabase)
 
 ---
 

@@ -12,20 +12,20 @@ import {
   User,
   Save,
   Bot,
-  Target,
-  Moon,
   Sun,
+  Moon,
   Laptop,
   Trash2,
   Check,
-  Code2,
-  Sparkles,
   RefreshCw,
+  Mail,
+  Globe,
+  ExternalLink,
+  Code2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const LANGUAGES = ['Python', 'C++', 'Java', 'JavaScript', 'TypeScript', 'Go', 'Rust', 'SQL'];
-const GOAL_TARGETS = [1, 3, 5, 10];
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -124,7 +124,7 @@ export default function SettingsPage() {
             />
             <Button
               onClick={handleSaveProfile}
-              className="bg-rose-500 hover:bg-rose-600 text-white gap-1.5 shadow-xs"
+              className="bg-rose-500 hover:bg-rose-600 text-white gap-1.5 shadow-xs cursor-pointer"
             >
               <Save className="w-4 h-4" /> Connect Profile
             </Button>
@@ -138,7 +138,49 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* 2. AI Coach & Learning Preferences */}
+      {/* 2. Developer & Creator Info */}
+      <Card className="border-rose-500/20 bg-rose-500/5 shadow-xs">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-semibold flex items-center gap-2 text-rose-500 dark:text-rose-400">
+            <Code2 className="w-4 h-4" />
+            Developer & Creator
+          </CardTitle>
+          <CardDescription>
+            LeetFlow is designed and developed by Bhagya Majithiya. Connect via GitHub, LinkedIn, or Email.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="mailto:thakkarbhagya65@gmail.com"
+              className="flex items-center gap-1.5 text-xs font-medium bg-background border hover:border-rose-500/40 hover:text-rose-500 px-3 py-2 rounded-lg transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 text-rose-500" />
+              thakkarbhagya65@gmail.com
+            </a>
+            <a
+              href="https://github.com/BM1100"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs font-medium bg-background border hover:border-rose-500/40 hover:text-rose-500 px-3 py-2 rounded-lg transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5 text-rose-500" />
+              GitHub (@BM1100)
+            </a>
+            <a
+              href="https://www.linkedin.com/in/bhagya-majithiya-05654336b"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs font-medium bg-background border hover:border-rose-500/40 hover:text-rose-500 px-3 py-2 rounded-lg transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-rose-500" />
+              LinkedIn Profile
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 3. AI Coach & Learning Preferences */}
       <Card className="border-border shadow-xs bg-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -161,7 +203,7 @@ export default function SettingsPage() {
                   key={lang}
                   type="button"
                   onClick={() => setPreferredLang(lang)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all border ${
+                  className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all border cursor-pointer ${
                     preferredLang === lang
                       ? 'bg-rose-500 text-white border-rose-500 shadow-xs'
                       : 'bg-background hover:bg-muted text-muted-foreground border-border'
@@ -182,7 +224,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={() => setExplanationDepth('concise')}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   explanationDepth === 'concise'
                     ? 'border-rose-500 bg-rose-500/5 text-foreground'
                     : 'border-border bg-background hover:bg-muted/50 text-muted-foreground'
@@ -197,7 +239,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={() => setExplanationDepth('detailed')}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                   explanationDepth === 'detailed'
                     ? 'border-rose-500 bg-rose-500/5 text-foreground'
                     : 'border-border bg-background hover:bg-muted/50 text-muted-foreground'
@@ -214,14 +256,14 @@ export default function SettingsPage() {
           <Button
             onClick={handleSavePreferences}
             disabled={saving}
-            className="bg-rose-500 hover:bg-rose-600 text-white gap-1.5 shadow-xs"
+            className="bg-rose-500 hover:bg-rose-600 text-white gap-1.5 shadow-xs cursor-pointer"
           >
             <Save className="w-4 h-4" /> Save Preferences
           </Button>
         </CardContent>
       </Card>
 
-      {/* 3. Appearance & Theme */}
+      {/* 4. Appearance & Theme */}
       <Card className="border-border shadow-xs bg-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -237,7 +279,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setTheme('light')}
-              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
                 mounted && theme === 'light'
                   ? 'border-rose-500 bg-rose-500/5 text-rose-500 dark:text-rose-400 font-semibold'
                   : 'border-border bg-background hover:bg-muted text-muted-foreground'
@@ -250,7 +292,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setTheme('dark')}
-              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
                 mounted && theme === 'dark'
                   ? 'border-rose-500 bg-rose-500/5 text-rose-500 dark:text-rose-400 font-semibold'
                   : 'border-border bg-background hover:bg-muted text-muted-foreground'
@@ -263,7 +305,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setTheme('system')}
-              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+              className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer ${
                 mounted && theme === 'system'
                   ? 'border-rose-500 bg-rose-500/5 text-rose-500 dark:text-rose-400 font-semibold'
                   : 'border-border bg-background hover:bg-muted text-muted-foreground'
@@ -276,7 +318,7 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* 4. Data Management & Storage */}
+      {/* 5. Data Management & Storage */}
       <Card className="border-border shadow-xs bg-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -288,13 +330,13 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={handleClearAIChatHistory} className="gap-1.5 text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10">
+          <Button variant="outline" onClick={handleClearAIChatHistory} className="gap-1.5 text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 cursor-pointer">
             <Bot className="w-3.5 h-3.5" /> Clear AI Chat History
           </Button>
-          <Button variant="outline" onClick={handleClearStudyPlanCache} className="gap-1.5 text-xs">
+          <Button variant="outline" onClick={handleClearStudyPlanCache} className="gap-1.5 text-xs cursor-pointer">
             <RefreshCw className="w-3.5 h-3.5 text-rose-500" /> Clear Study Plan Cache
           </Button>
-          <Button variant="outline" onClick={handleResetAllSettings} className="gap-1.5 text-xs text-destructive hover:bg-destructive/10">
+          <Button variant="outline" onClick={handleResetAllSettings} className="gap-1.5 text-xs text-destructive hover:bg-destructive/10 cursor-pointer">
             <Trash2 className="w-3.5 h-3.5" /> Reset Preferences
           </Button>
         </CardContent>
