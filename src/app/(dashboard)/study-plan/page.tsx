@@ -1099,6 +1099,30 @@ export default function StudyPlanPage() {
         }
       }
     }
+
+    if (user?.id) {
+      fetch('/api/user/sync')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.user?.latestStudyPlan?.planData) {
+            const planData = data.user.latestStudyPlan.planData;
+            if (planData.plan && Array.isArray(planData.plan)) {
+              setGeneratedPlan(planData.plan);
+              if (typeof window !== 'undefined') {
+                const key = `study_plan_${user.id}`;
+                localStorage.setItem(key, JSON.stringify(planData.plan));
+              }
+            }
+            if (planData.completedProblems) {
+              setCompletedProblems(planData.completedProblems);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('leetflow_completed_problems', JSON.stringify(planData.completedProblems));
+              }
+            }
+          }
+        })
+        .catch((err) => console.warn('Study plan sync fetch warning:', err));
+    }
   }, [user?.id]);
 
   function toggleProblemCompleted(slug: string) {
@@ -1106,6 +1130,19 @@ export default function StudyPlanPage() {
     setCompletedProblems(next);
     if (typeof window !== 'undefined') {
       localStorage.setItem('leetflow_completed_problems', JSON.stringify(next));
+    }
+    if (user?.id) {
+      fetch('/api/user/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studyPlanData: {
+            topics: selectedTopics,
+            completedProblems: next,
+            plan: generatedPlan,
+          },
+        }),
+      }).catch((err) => console.warn('Supabase post study plan warning:', err));
     }
     if (next[slug]) {
       toast.success('Marked problem as completed! 🎉');
@@ -1249,6 +1286,19 @@ export default function StudyPlanPage() {
       if (typeof window !== 'undefined') {
         localStorage.setItem(storageKey, JSON.stringify(parsed));
       }
+      if (user?.id) {
+        fetch('/api/user/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studyPlanData: {
+              topics: selectedTopics,
+              completedProblems,
+              plan: parsed,
+            },
+          }),
+        }).catch((err) => console.warn('Supabase post plan warning:', err));
+      }
       toast.success('Generated complete progressive 7-day study plan!');
     } catch (err) {
       console.warn('API error, using curated progressive fallback plan:', err);
@@ -1256,6 +1306,19 @@ export default function StudyPlanPage() {
       setGeneratedPlan(fallback);
       if (typeof window !== 'undefined') {
         localStorage.setItem(storageKey, JSON.stringify(fallback));
+      }
+      if (user?.id) {
+        fetch('/api/user/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studyPlanData: {
+              topics: selectedTopics,
+              completedProblems,
+              plan: fallback,
+            },
+          }),
+        }).catch((err) => console.warn('Supabase post plan warning:', err));
       }
       toast.success('Generated complete progressive 7-day study plan!');
     } finally {
