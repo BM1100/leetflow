@@ -8,18 +8,38 @@ export function useConnectedUsername() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (typeof window !== 'undefined') {
-      // Key storage per Clerk user ID if logged in, fallback to generic key
-      const key = user?.id ? `lc_username_${user.id}` : 'lc_username';
-      const saved = localStorage.getItem(key);
-      setUsername(saved);
+
+    const key = user?.id ? `lc_username_${user.id}` : 'lc_username';
+    const localSaved = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+    
+    if (localSaved) {
+      setUsername(localSaved);
+      setLoading(false);
     }
-    setLoading(false);
+
+    // Sync from Supabase database endpoint if logged in
+    if (user?.id) {
+      fetch('/api/user/sync')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.user?.leetcodeUsername) {
+            const dbUsername = data.user.leetcodeUsername;
+            setUsername(dbUsername);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(key, dbUsername);
+            }
+          }
+        })
+        .catch((err) => console.warn('Supabase sync fetch warning:', err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   }, [user?.id, isLoaded]);
 
   function setConnectedUsername(newUsername: string | null) {
+    const key = user?.id ? `lc_username_${user.id}` : 'lc_username';
     if (typeof window !== 'undefined') {
-      const key = user?.id ? `lc_username_${user.id}` : 'lc_username';
       if (newUsername) {
         localStorage.setItem(key, newUsername);
       } else {
@@ -27,6 +47,15 @@ export function useConnectedUsername() {
       }
     }
     setUsername(newUsername);
+
+    // Persist to database if logged in
+    if (user?.id) {
+      fetch('/api/user/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leetcodeUsername: newUsername }),
+      }).catch((err) => console.warn('Supabase sync post warning:', err));
+    }
   }
 
   return { username, setConnectedUsername, loading, isLoaded };
