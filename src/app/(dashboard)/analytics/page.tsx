@@ -1,17 +1,28 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { useConnectedUsername } from '@/hooks/use-connected-username';
 import { useLeetCode } from '@/hooks/use-leetcode';
 import { PageHeader } from '@/components/shared/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, Area, AreaChart
+  AreaChart, Area
 } from 'recharts';
 
 export default function AnalyticsPage() {
   const { username } = useConnectedUsername();
   const { data, isLoading } = useLeetCode(username);
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted ? (resolvedTheme === 'dark' || theme === 'dark') : true;
+  const chartTextColor = isDark ? '#ffffff' : '#0f172a';
 
   const topicData = data
     ? [
@@ -59,16 +70,22 @@ export default function AnalyticsPage() {
               <ResponsiveContainer width="100%" height={380}>
                 <BarChart data={topicData} layout="vertical" margin={{ left: 24, right: 24, top: 8, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: '#ffffff', fontWeight: 600 }} stroke="hsl(var(--border))" />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: chartTextColor, fontWeight: 600 }} stroke="hsl(var(--border))" />
                   <YAxis
                     type="category"
                     dataKey="name"
                     width={140}
-                    tick={{ fontSize: 12, fill: '#ffffff', fontWeight: 600 }}
+                    tick={{ fontSize: 12, fill: chartTextColor, fontWeight: 600 }}
                     stroke="hsl(var(--border))"
                   />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12, color: '#ffffff' }}
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: chartTextColor,
+                    }}
                     formatter={(v: any) => [v, 'Problems Solved']}
                   />
                   <Bar dataKey="solved" fill="#f43f5e" radius={[0, 6, 6, 0]} />
@@ -92,10 +109,16 @@ export default function AnalyticsPage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#ffffff' }} stroke="hsl(var(--border))" />
-                  <YAxis tick={{ fontSize: 11, fill: '#ffffff' }} domain={['auto', 'auto']} stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: chartTextColor }} stroke="hsl(var(--border))" />
+                  <YAxis tick={{ fontSize: 11, fill: chartTextColor }} domain={['auto', 'auto']} stroke="hsl(var(--border))" />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12, color: '#ffffff' }}
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: chartTextColor,
+                    }}
                     formatter={(v: any) => [v, 'Rating']}
                   />
                   <Area type="monotone" dataKey="rating" stroke="#f43f5e" strokeWidth={2} fill="url(#ratingGrad)" />

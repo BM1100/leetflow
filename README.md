@@ -1,11 +1,13 @@
 # ⚡ LeetFlow AI — Next-Gen AI Coding Coach & DSA Practice Platform
 
-![LeetFlow Cover](https://img.shields.io/badge/LeetFlow-AI%20Coding%20Coach-rose)
-![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss)
-![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%203.6%20Flash-8e44ad)
-![Clerk Auth](https://img.shields.io/badge/Auth-Clerk-6c5ce7)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://leetflow.vercel.app)
+[![LeetFlow Cover](https://img.shields.io/badge/LeetFlow-AI%20Coding%20Coach-rose?style=for-the-badge)](https://leetflow.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini%203.6%20Flash-8e44ad?style=for-the-badge)](https://ai.google.dev/)
+
+🔗 **Live Production Demo**: [https://leetflow.vercel.app](https://leetflow.vercel.app)
 
 **LeetFlow** is a modern, AI-powered Data Structures & Algorithms (DSA) platform designed for competitive programmers and software engineering interview candidates. It connects with your official LeetCode profile to analyze your performance, generate optimal solutions in 9+ languages, audit line-by-line Big-O time and space complexity, and build progressive 7-day study roadmaps.
 
@@ -15,10 +17,10 @@
 
 * **⚡ AI Problem Solver**: Generates optimal code solutions in 9+ languages (Python, C++, Java, JS, TS, Go, Rust, C#, SQL) with step-by-step intuition and edge cases. Includes C++ optimization (omitting redundant headers for clean LeetCode submission).
 * **⏱️ Line-by-Line Complexity Analyzer**: Deeply audits custom code snippets and outputs exact Big-O Time & Auxiliary Space complexity breakdowns.
-* **🤖 Scoped AI DSA Coach**: An interactive AI mentor strictly dedicated to Data Structures, Algorithms, and Technical Interview prep.
-* **📅 Progressive 7-Day Study Plans**: Generates structured 7-day pattern roadmaps across 48 official LeetCode topic tags with zero duplicate questions.
-* **📊 Live LeetCode Profile Analytics**: Fetches live solved statistics (Easy, Medium, Hard breakdown), ranking, contribution points, recent accepted submissions, and topic skill tags directly via GraphQL.
-* **🎨 Crimson Pulse Theme**: Modern dark-first UI styled with glassmorphism cards and smooth micro-animations.
+* **🤖 Scoped AI DSA Coach**: An interactive AI mentor strictly dedicated to Data Structures, Algorithms, and Technical Interview prep, featuring persistent chat history and clear chat capabilities.
+* **📅 Progressive 7-Day Study Plans**: Generates structured 7-day pattern roadmaps across 48 official LeetCode topic tags with zero duplicate questions and interactive problem completion checkboxes.
+* **📊 Live LeetCode Profile Analytics**: Fetches live solved statistics (Easy, Medium, Hard breakdown), ranking, contribution points, recent accepted submissions, and top 12 topic skill tags directly via GraphQL.
+* **🎨 Crimson Pulse Theme**: Modern dark-first UI styled with glassmorphism cards, dynamic theme-adapting text, and smooth micro-animations.
 
 ---
 
@@ -33,7 +35,14 @@
 
 ---
 
-## 🚀 Getting Started
+## 🌐 Live Deployment & Demo
+
+View the live production application deployed on Vercel:
+👉 **[https://leetflow.vercel.app](https://leetflow.vercel.app)**
+
+---
+
+## 🚀 Getting Started Locally
 
 ### 1. Clone the repository
 ```bash
@@ -68,17 +77,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to view **LeetFlow**.
-
----
-
-## 🌐 Deploy to Vercel
-
-The easiest way to deploy LeetFlow is with [Vercel](https://vercel.com/new):
-
-1. Push your code to GitHub.
-2. Import your repository into Vercel.
-3. Add your Environment Variables (`GEMINI_API_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `DATABASE_URL`).
-4. Click **Deploy**!
 
 ---
 
