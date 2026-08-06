@@ -1,7 +1,7 @@
 # ⚡ LeetFlow AI — Next-Gen AI Coding Coach & DSA Practice Platform
 
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://leetflow.vercel.app)
-[![LeetFlow Cover](https://img.shields.io/badge/LeetFlow-AI%20Coding%20Coach-rose?style=for-the-badge)](https://leetflow.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://leetflow-ruby.vercel.app/)
+[![LeetFlow Cover](https://img.shields.io/badge/LeetFlow-AI%20Coding%20Coach-rose?style=for-the-badge)](https://leetflow-ruby.vercel.app/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
