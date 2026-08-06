@@ -37,6 +37,11 @@ export const metadata: Metadata = {
       "AI-powered coding coach for LeetCode performance analysis and interview preparation.",
     type: "website",
   },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
