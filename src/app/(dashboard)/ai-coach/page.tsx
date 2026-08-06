@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { useConnectedUsername } from '@/hooks/use-connected-username';
 import { PageHeader } from '@/components/shared/page-header';
 import { FormattedMarkdown } from '@/components/shared/formatted-markdown';
@@ -40,6 +41,7 @@ const ICON_MAP: Record<string, any> = {
 const CHAT_STORAGE_KEY = 'leetflow_ai_chat_history';
 
 export default function AICoachPage() {
+  const { user } = useUser();
   const { username } = useConnectedUsername();
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
@@ -47,7 +49,7 @@ export default function AICoachPage() {
   const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Load saved chat history on mount
+  // Load saved chat history from localStorage & Supabase
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem(CHAT_STORAGE_KEY);
@@ -56,32 +58,56 @@ export default function AICoachPage() {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setMessages(parsed);
-          return;
         }
       } catch (err) {
-        console.error('Failed to parse saved chat history:', err);
+        console.error('Failed to parse local chat history:', err);
       }
     }
 
-    // Default welcome message if no history
-    setMessages([
-      {
-        role: 'assistant',
-        content: `Hello! I'm your **LeetCode AI Coach**. ${
-          username
-            ? `I've loaded your performance stats for **@${username}**.`
-            : 'Connect your LeetCode profile on the Dashboard for personalized feedback.'
-        }\n\nHow can I help you prepare today? You can ask for weak topic analysis, problem recommendations, or concept explanations!`,
-      },
-    ]);
-  }, [username]);
+    // Also fetch latest conversation from Supabase if logged in
+    if (user?.id) {
+      fetch('/api/user/sync')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.user?.latestConversation?.messages) {
+            const dbMsgs = data.user.latestConversation.messages;
+            if (Array.isArray(dbMsgs) && dbMsgs.length > 0) {
+              setMessages(dbMsgs);
+              localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(dbMsgs));
+            }
+          }
+        })
+        .catch((err) => console.warn('Supabase chat sync warning:', err));
+    }
 
-  // Save to localStorage on message updates
+    if (!saved) {
+      setMessages([
+        {
+          role: 'assistant',
+          content: `Hello! I'm your **LeetCode AI Coach**. ${
+            username
+              ? `I've loaded your performance stats for **@${username}**.`
+              : 'Connect your LeetCode profile on the Dashboard for personalized feedback.'
+          }\n\nHow can I help you prepare today? You can ask for weak topic analysis, problem recommendations, or concept explanations!`,
+        },
+      ]);
+    }
+  }, [username, user?.id]);
+
+  // Save to localStorage & Supabase DB on message updates
   useEffect(() => {
     if (mounted && messages.length > 0) {
       localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+
+      if (user?.id) {
+        fetch('/api/user/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatMessages: messages }),
+        }).catch((err) => console.warn('Supabase post chat warning:', err));
+      }
     }
-  }, [messages, mounted]);
+  }, [messages, mounted, user?.id]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,6 +122,15 @@ export default function AICoachPage() {
       },
     ];
     setMessages(defaultMsg);
+
+    if (user?.id) {
+      fetch('/api/user/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatMessages: defaultMsg }),
+      }).catch((err) => console.warn('Supabase post chat warning:', err));
+    }
+
     toast.success('AI Chat history cleared');
   }
 
@@ -155,7 +190,7 @@ export default function AICoachPage() {
           variant="outline"
           size="sm"
           onClick={clearChat}
-          className="text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 gap-1.5"
+          className="text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 gap-1.5 cursor-pointer"
         >
           <Trash2 className="w-3.5 h-3.5" /> Clear Chat
         </Button>
