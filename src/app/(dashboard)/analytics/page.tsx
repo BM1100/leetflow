@@ -54,18 +54,24 @@ export default function AnalyticsPage() {
         <>
           {/* Topic Distribution */}
           <div className="rounded-xl border bg-card p-6 shadow-xs">
-            <h3 className="font-semibold text-sm mb-4">Topic Distribution (Top 12)</h3>
+            <h3 className="font-semibold text-sm mb-4">Topic Distribution (Top 12 Solved Topics)</h3>
             {topicData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={topicData} layout="vertical" margin={{ left: 16, right: 16 }}>
+              <ResponsiveContainer width="100%" height={380}>
+                <BarChart data={topicData} layout="vertical" margin={{ left: 24, right: 24, top: 8, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
-                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
-                    formatter={(v: any) => [v, 'Solved']}
+                  <XAxis type="number" tick={{ fontSize: 11, fill: '#ffffff', fontWeight: 600 }} stroke="hsl(var(--border))" />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={140}
+                    tick={{ fontSize: 12, fill: '#ffffff', fontWeight: 600 }}
+                    stroke="hsl(var(--border))"
                   />
-                  <Bar dataKey="solved" fill="#f97316" radius={[0, 4, 4, 0]} />
+                  <Tooltip
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12, color: '#ffffff' }}
+                    formatter={(v: any) => [v, 'Problems Solved']}
+                  />
+                  <Bar dataKey="solved" fill="#f43f5e" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -81,18 +87,18 @@ export default function AnalyticsPage() {
                 <AreaChart data={contestData} margin={{ right: 8 }}>
                   <defs>
                     <linearGradient id="ratingGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-                  <YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#ffffff' }} stroke="hsl(var(--border))" />
+                  <YAxis tick={{ fontSize: 11, fill: '#ffffff' }} domain={['auto', 'auto']} stroke="hsl(var(--border))" />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12, color: '#ffffff' }}
                     formatter={(v: any) => [v, 'Rating']}
                   />
-                  <Area type="monotone" dataKey="rating" stroke="#f97316" strokeWidth={2} fill="url(#ratingGrad)" />
+                  <Area type="monotone" dataKey="rating" stroke="#f43f5e" strokeWidth={2} fill="url(#ratingGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

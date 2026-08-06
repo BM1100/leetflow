@@ -6,8 +6,9 @@ import { useConnectedUsername } from '@/hooks/use-connected-username';
 import { PageHeader } from '@/components/shared/page-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { TOPICS } from '@/lib/constants';
-import { Sparkles, Loader2, CheckCircle2, Calendar, ExternalLink, Trash2, TrendingUp } from 'lucide-react';
+import { Sparkles, Loader2, CheckCircle2, Calendar, ExternalLink, Trash2, TrendingUp, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProblemRef {
@@ -1073,6 +1074,7 @@ export default function StudyPlanPage() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>(['Dynamic Programming', 'Binary Search']);
   const [loading, setLoading] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState<StudyDay[] | null>(null);
+  const [completedProblems, setCompletedProblems] = useState<Record<string, boolean>>({});
 
   const storageKey = user?.id ? `study_plan_${user.id}` : 'study_plan_guest';
 
@@ -1087,8 +1089,28 @@ export default function StudyPlanPage() {
           console.warn('Could not parse saved study plan:', err);
         }
       }
+
+      const savedCompleted = localStorage.getItem('leetflow_completed_problems');
+      if (savedCompleted) {
+        try {
+          setCompletedProblems(JSON.parse(savedCompleted));
+        } catch (err) {
+          console.warn('Could not parse completed problems:', err);
+        }
+      }
     }
   }, [user?.id]);
+
+  function toggleProblemCompleted(slug: string) {
+    const next = { ...completedProblems, [slug]: !completedProblems[slug] };
+    setCompletedProblems(next);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('leetflow_completed_problems', JSON.stringify(next));
+    }
+    if (next[slug]) {
+      toast.success('Marked problem as completed! 🎉');
+    }
+  }
 
   function toggleTopic(topic: string) {
     if (selectedTopics.includes(topic)) {
@@ -1265,6 +1287,7 @@ export default function StudyPlanPage() {
 
     return {
       name,
+      slug,
       url: `https://leetcode.com/problems/${slug}/`,
       difficulty,
     };
@@ -1363,12 +1386,19 @@ export default function StudyPlanPage() {
                   </div>
                   <ul className="space-y-2.5">
                     {day.problems.map((prob, pIdx) => {
-                      const { name, url, difficulty } = getProblemDetails(prob, idx);
+                      const { name, url, difficulty, slug } = getProblemDetails(prob, idx);
+                      const isDone = !!completedProblems[slug];
                       return (
-                        <li key={pIdx} className="text-xs text-foreground flex items-center justify-between gap-1.5 group">
-                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                            <span className="truncate font-medium">{name}</span>
+                        <li key={pIdx} className="text-xs text-foreground flex items-center justify-between gap-2 group p-1 rounded-md hover:bg-muted/40 transition-colors">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <Checkbox
+                              checked={isDone}
+                              onCheckedChange={() => toggleProblemCompleted(slug)}
+                              className="w-4 h-4 rounded border-rose-500/50 data-[state=checked]:bg-rose-500 data-[state=checked]:text-white cursor-pointer"
+                            />
+                            <span className={`truncate font-medium transition-all ${isDone ? 'line-through text-muted-foreground opacity-60' : ''}`}>
+                              {name}
+                            </span>
                           </div>
                           <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
                             <Badge

@@ -15,12 +15,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "LeetCode AI Coach",
-    template: "%s | LeetCode AI Coach",
+    default: "LeetFlow — AI Coding Coach & DSA Practice Platform",
+    template: "%s | LeetFlow",
   },
   description:
     "AI-powered coding coach that analyzes your LeetCode performance, identifies weak spots, and creates personalized study plans.",
   keywords: [
+    "leetflow",
     "leetcode",
     "coding",
     "interview prep",
@@ -29,9 +30,9 @@ export const metadata: Metadata = {
     "algorithms",
     "data structures",
   ],
-  authors: [{ name: "LeetCode AI Coach" }],
+  authors: [{ name: "LeetFlow" }],
   openGraph: {
-    title: "LeetCode AI Coach",
+    title: "LeetFlow — AI Coding Coach",
     description:
       "AI-powered coding coach for LeetCode performance analysis and interview preparation.",
     type: "website",

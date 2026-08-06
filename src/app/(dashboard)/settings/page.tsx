@@ -81,6 +81,11 @@ export default function SettingsPage() {
     toast.success('Cleared local Study Plan cache');
   }
 
+  function handleClearAIChatHistory() {
+    localStorage.removeItem('leetflow_ai_chat_history');
+    toast.success('Cleared AI Chat History');
+  }
+
   function handleResetAllSettings() {
     localStorage.removeItem('pref_language');
     localStorage.removeItem('pref_daily_target');
@@ -279,10 +284,13 @@ export default function SettingsPage() {
             Data & Cache Management
           </CardTitle>
           <CardDescription>
-            Manage locally cached data, saved study plans, and preferences.
+            Manage locally cached data, saved study plans, chat history, and preferences.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
+          <Button variant="outline" onClick={handleClearAIChatHistory} className="gap-1.5 text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10">
+            <Bot className="w-3.5 h-3.5" /> Clear AI Chat History
+          </Button>
           <Button variant="outline" onClick={handleClearStudyPlanCache} className="gap-1.5 text-xs">
             <RefreshCw className="w-3.5 h-3.5 text-rose-500" /> Clear Study Plan Cache
           </Button>

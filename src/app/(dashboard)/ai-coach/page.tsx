@@ -6,7 +6,6 @@ import { PageHeader } from '@/components/shared/page-header';
 import { FormattedMarkdown } from '@/components/shared/formatted-markdown';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { AI_SUGGESTIONS } from '@/types/ai';
 import {
   Bot,
@@ -20,7 +19,9 @@ import {
   Briefcase,
   HelpCircle,
   GraduationCap,
+  Trash2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ChatMsg {
   role: 'user' | 'assistant';
@@ -36,25 +37,67 @@ const ICON_MAP: Record<string, any> = {
   GraduationCap,
 };
 
+const CHAT_STORAGE_KEY = 'leetflow_ai_chat_history';
+
 export default function AICoachPage() {
   const { username } = useConnectedUsername();
-  const [messages, setMessages] = useState<ChatMsg[]>([
-    {
-      role: 'assistant',
-      content: `Hello! I'm your **LeetCode AI Coach**. ${
-        username
-          ? `I've loaded your performance stats for **@${username}**.`
-          : 'Connect your LeetCode profile on the Dashboard for personalized feedback.'
-      }\n\nHow can I help you prepare today? You can ask for weak topic analysis, problem recommendations, or concept explanations!`,
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Load saved chat history on mount
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          return;
+        }
+      } catch (err) {
+        console.error('Failed to parse saved chat history:', err);
+      }
+    }
+
+    // Default welcome message if no history
+    setMessages([
+      {
+        role: 'assistant',
+        content: `Hello! I'm your **LeetCode AI Coach**. ${
+          username
+            ? `I've loaded your performance stats for **@${username}**.`
+            : 'Connect your LeetCode profile on the Dashboard for personalized feedback.'
+        }\n\nHow can I help you prepare today? You can ask for weak topic analysis, problem recommendations, or concept explanations!`,
+      },
+    ]);
+  }, [username]);
+
+  // Save to localStorage on message updates
+  useEffect(() => {
+    if (mounted && messages.length > 0) {
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+    }
+  }, [messages, mounted]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  function clearChat() {
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+    const defaultMsg: ChatMsg[] = [
+      {
+        role: 'assistant',
+        content: `Chat history cleared! How can I assist you with your DSA practice today?`,
+      },
+    ];
+    setMessages(defaultMsg);
+    toast.success('AI Chat history cleared');
+  }
 
   async function sendMessage(textToSend?: string) {
     const text = (textToSend || input).trim();
@@ -99,14 +142,24 @@ export default function AICoachPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-9.5rem)] min-h-[500px]">
-      <PageHeader
-        title="AI Coach"
-        description={
-          username
-            ? `Personalized DSA mentor powered by Gemini AI (@${username})`
-            : 'Personalized DSA mentor powered by Gemini AI'
-        }
-      />
+      <div className="flex items-center justify-between">
+        <PageHeader
+          title="AI Coach"
+          description={
+            username
+              ? `Personalized DSA mentor powered by Gemini AI (@${username})`
+              : 'Personalized DSA mentor powered by Gemini AI'
+          }
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={clearChat}
+          className="text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 gap-1.5"
+        >
+          <Trash2 className="w-3.5 h-3.5" /> Clear Chat
+        </Button>
+      </div>
 
       <div className="flex-1 border rounded-xl bg-card overflow-hidden flex flex-col shadow-xs mt-4 min-h-0">
         {/* Scrollable Messages List */}
@@ -154,6 +207,7 @@ export default function AICoachPage() {
                 </span>
               </div>
             )}
+            <div ref={scrollRef} />
           </div>
         </div>
 
@@ -166,7 +220,7 @@ export default function AICoachPage() {
                 key={sug.label}
                 onClick={() => sendMessage(sug.prompt)}
                 disabled={loading}
-                className="flex items-center gap-1.5 text-xs bg-background hover:bg-rose-500/10 hover:text-rose-500 border rounded-full px-3 py-1.5 font-medium whitespace-nowrap transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs bg-background hover:bg-rose-500/10 hover:text-rose-500 border rounded-full px-3 py-1.5 font-medium whitespace-nowrap transition-colors disabled:opacity-50 cursor-pointer"
               >
                 <IconComponent className="w-3.5 h-3.5 text-rose-500" />
                 <span>{sug.label}</span>
@@ -188,7 +242,7 @@ export default function AICoachPage() {
           <Button
             onClick={() => sendMessage(input)}
             disabled={loading || !input.trim()}
-            className="bg-rose-500 hover:bg-rose-600 text-white shadow-xs"
+            className="bg-rose-500 hover:bg-rose-600 text-white shadow-xs cursor-pointer"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </Button>
