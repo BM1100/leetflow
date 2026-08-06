@@ -40,9 +40,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500 text-white shadow-xs">
-            <Sparkles className="w-5 h-5" />
-          </div>
+          <img src="/icon.png" alt="LeetFlow Logo" className="w-8 h-8 rounded-lg object-cover shadow-xs border border-rose-500/20" />
           <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-rose-500 to-rose-400 bg-clip-text text-transparent">
             LeetFlow
           </span>

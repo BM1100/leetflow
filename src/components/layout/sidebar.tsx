@@ -30,9 +30,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
       {/* Header */}
       <div className="h-16 flex items-center px-4 justify-between border-b">
         <div className={cn("flex items-center gap-2", !isOpen && !isMobile && "hidden")}>
-          <div className="bg-gradient-to-br from-rose-500 to-rose-600 p-1.5 rounded-lg shadow-xs">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
+          <img src="/icon.png" alt="LeetFlow Logo" className="w-7 h-7 rounded-lg object-cover shadow-xs border border-rose-500/20" />
           <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-rose-500 to-rose-400 bg-clip-text text-transparent">
             LeetFlow
           </span>
