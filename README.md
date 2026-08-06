@@ -50,7 +50,7 @@ Designed and developed with ❤️ by **Bhagya Majithiya**.
 ## 🌐 Live Deployment & Demo
 
 View the live production application deployed on Vercel:
-👉 **[https://leetflow.vercel.app](https://leetflow.vercel.app)**
+👉 **[https://leetflow.vercel.app](https://leetflow-ruby.vercel.app/)**
 
 ---
 
@@ -92,6 +92,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view **Le
 
 ---
 
-## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
