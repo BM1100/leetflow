@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateAIResponse } from '@/lib/gemini';
 import { getFullLeetCodeStats } from '@/services/leetcode';
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, username } = await req.json();

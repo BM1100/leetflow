@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSolverResponse } from '@/lib/gemini';
 
+// Increase Vercel serverless function timeout to 60 seconds
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const { problemInput, language } = await req.json();
@@ -13,27 +16,33 @@ export async function POST(req: NextRequest) {
 
     const prompt = `You are an elite Data Structures & Algorithms (DSA) Expert and competitive programming coach.
 
-Please provide the OPTIMAL solution for the following LeetCode problem:
+Solve the following LeetCode problem completely and without any truncation:
 "${problemInput.trim()}"
 
 Target Programming Language: ${selectedLang}
 
-CRITICAL PRIORITY: The CODE SOLUTION must always come FIRST before any explanation.
+ABSOLUTE RULES — NEVER BREAK THESE:
+- ALWAYS output the COMPLETE, FULLY WORKING code. Never stop mid-function or mid-class. If the solution is long, write every single line.
+- NEVER truncate, abbreviate, or write "// ... rest of code" or "// continue here". Write the full implementation.
+- The CODE block must come FIRST before any explanation.
 
-Requirements:
-1. Provide clean, idiomatic LeetCode class / function solution code in ${selectedLang} — THIS MUST BE THE FIRST SECTION.
-2. CRITICAL CODE FORMATTING RULE:
-   - For C++ / C: Do NOT include redundant header includes like \`#include <bits/stdc++.h>\`, \`#include <vector>\`, \`#include <string>\`, or \`using namespace std;\`. Assume all standard headers and \`using namespace std;\` are already provided by the LeetCode environment. Start directly with the \`class Solution { ... };\` block or main function signature.
-   - For Python / Java / JS / TS / Go / Rust / C#: Keep imports minimal and write concise LeetCode class/method code ready to paste directly into LeetCode's code editor.
-3. Then explain the core intuition and algorithm step-by-step.
-4. Give exact Big-O Time and Auxiliary Space complexity with clear justifications.
-5. List key edge cases and how the solution handles them.
+Code Formatting Rules:
+- For C++ / C: Do NOT include #include<bits/stdc++.h>, #include<vector>, #include<string>, or "using namespace std;". Start directly with class Solution { }; or the function signature.
+- For Python / Java / JS / TS / Go / Rust / C#: Minimal imports only. Write LeetCode-ready class/method code.
 
-Format your response cleanly in Markdown using EXACTLY these headings IN THIS ORDER:
+Format your response using EXACTLY these sections IN THIS ORDER:
+
 ### ⚙️ Optimal Solution (${selectedLang})
+[Complete, fully working code here — no truncation allowed]
+
 ### 💡 Intuition & Approach
+[Step-by-step explanation of the algorithm]
+
 ### ⏱️ Complexity Analysis
-### 🔍 Edge Cases`;
+[Exact Big-O Time and Auxiliary Space with justification]
+
+### 🔍 Edge Cases
+[Key edge cases and how the solution handles them]`;
 
     const reply = await generateSolverResponse(prompt);
 
