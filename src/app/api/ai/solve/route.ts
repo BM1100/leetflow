@@ -18,18 +18,20 @@ Please provide the OPTIMAL solution for the following LeetCode problem:
 
 Target Programming Language: ${selectedLang}
 
+CRITICAL PRIORITY: The CODE SOLUTION must always come FIRST before any explanation.
+
 Requirements:
-1. Explain the core intuition and algorithm step-by-step.
-2. Provide clean, idiomatic LeetCode class / function solution code in ${selectedLang}.
-3. CRITICAL CODE FORMATTING RULE:
+1. Provide clean, idiomatic LeetCode class / function solution code in ${selectedLang} — THIS MUST BE THE FIRST SECTION.
+2. CRITICAL CODE FORMATTING RULE:
    - For C++ / C: Do NOT include redundant header includes like \`#include <bits/stdc++.h>\`, \`#include <vector>\`, \`#include <string>\`, or \`using namespace std;\`. Assume all standard headers and \`using namespace std;\` are already provided by the LeetCode environment. Start directly with the \`class Solution { ... };\` block or main function signature.
    - For Python / Java / JS / TS / Go / Rust / C#: Keep imports minimal and write concise LeetCode class/method code ready to paste directly into LeetCode's code editor.
+3. Then explain the core intuition and algorithm step-by-step.
 4. Give exact Big-O Time and Auxiliary Space complexity with clear justifications.
 5. List key edge cases and how the solution handles them.
 
-Format your response cleanly in Markdown using these headings:
-### 💡 Intuition & Approach
+Format your response cleanly in Markdown using EXACTLY these headings IN THIS ORDER:
 ### ⚙️ Optimal Solution (${selectedLang})
+### 💡 Intuition & Approach
 ### ⏱️ Complexity Analysis
 ### 🔍 Edge Cases`;
 
