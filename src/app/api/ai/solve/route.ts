@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateSolverResponse } from '@/lib/gemini';
+import { NextRequest } from 'next/server';
+import { generateSolverStream } from '@/lib/gemini';
 
-// Increase Vercel serverless function timeout to 60 seconds
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
@@ -9,21 +8,22 @@ export async function POST(req: NextRequest) {
     const { problemInput, language } = await req.json();
 
     if (!problemInput || typeof problemInput !== 'string' || problemInput.trim() === '') {
-      return NextResponse.json({ error: 'Please provide a LeetCode problem number, title, or description.' }, { status: 400 });
+      return new Response(
+        JSON.stringify({ error: 'Please provide a LeetCode problem number, title, or description.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
     const selectedLang = language || 'Python';
 
-    const prompt = `You are an elite Data Structures & Algorithms (DSA) Expert and competitive programming coach.
-
-Solve the following LeetCode problem completely and without any truncation:
+    const prompt = `Solve the following LeetCode problem completely and without any truncation:
 "${problemInput.trim()}"
 
 Target Programming Language: ${selectedLang}
 
 ABSOLUTE RULES — NEVER BREAK THESE:
-- ALWAYS output the COMPLETE, FULLY WORKING code. Never stop mid-function or mid-class. If the solution is long, write every single line.
-- NEVER truncate, abbreviate, or write "// ... rest of code" or "// continue here". Write the full implementation.
+- ALWAYS output the COMPLETE, FULLY WORKING code. Never stop mid-function or mid-class.
+- NEVER truncate, abbreviate, or write "// ... rest of code". Write the full implementation.
 - The CODE block must come FIRST before any explanation.
 
 Code Formatting Rules:
@@ -44,20 +44,49 @@ Format your response using EXACTLY these sections IN THIS ORDER:
 ### 🔍 Edge Cases
 [Key edge cases and how the solution handles them]`;
 
-    const reply = await generateSolverResponse(prompt);
+    // Get Gemini streaming response
+    const geminiStream = await generateSolverStream(prompt);
 
-    if (!reply || reply.trim() === '') {
-      return NextResponse.json({ error: 'AI generated an empty response. Please try clicking Solve again.' }, { status: 500 });
-    }
+    // Pipe Gemini chunks directly to the HTTP response — bypasses Vercel timeout
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of geminiStream) {
+            const text = chunk.text;
+            if (text) {
+              controller.enqueue(encoder.encode(text));
+            }
+          }
+        } catch (err) {
+          console.error('[Stream error]', err);
+        } finally {
+          controller.close();
+        }
+      },
+    });
 
-    return NextResponse.json({ solution: reply });
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store',
+        'X-Accel-Buffering': 'no',
+        'Transfer-Encoding': 'chunked',
+      },
+    });
   } catch (err: unknown) {
     const rawMessage = err instanceof Error ? err.message : String(err);
-    const isQuota = rawMessage.includes('RESOURCE_EXHAUSTED') || rawMessage.includes('429') || rawMessage.includes('quota');
+    const isQuota =
+      rawMessage.includes('RESOURCE_EXHAUSTED') ||
+      rawMessage.includes('429') ||
+      rawMessage.includes('quota');
     const cleanMessage = isQuota
       ? 'Gemini API rate limit temporarily reached. Please wait 5-10 seconds and click Solve Problem again.'
       : rawMessage;
 
-    return NextResponse.json({ error: cleanMessage }, { status: 500 });
+    return new Response(JSON.stringify({ error: cleanMessage }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

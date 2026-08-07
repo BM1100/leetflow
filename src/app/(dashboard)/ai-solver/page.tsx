@@ -59,28 +59,35 @@ function AISolverContent() {
         }),
       });
 
+      // Handle non-streaming error responses (400, 500 with JSON body)
       const contentType = res.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error(`Server returned non-JSON response (${res.status}). Please try again.`);
-      }
-
-      const data = await res.json();
-
-      if (!res.ok) {
+      if (!res.ok || contentType.includes('application/json')) {
+        const data = await res.json();
         throw new Error(data.error || 'Failed to generate solution');
       }
 
-      if (!data.solution) {
-        throw new Error('No solution returned from AI model');
+      if (!res.body) throw new Error('No response stream received. Please try again.');
+
+      // ✅ Stream: read chunks as they arrive and display progressively
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+
+      setLoading(false); // Hide spinner — solution starts appearing live
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+        setSolution(accumulated);
       }
 
-      setSolution(data.solution);
-      toast.success('Optimal solution generated!');
+      if (!accumulated.trim()) throw new Error('AI returned an empty solution. Please try again.');
+      toast.success('Solution generated!');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setErrorMessage(msg);
       toast.error(msg);
-    } finally {
       setLoading(false);
     }
   }
@@ -195,9 +202,9 @@ function AISolverContent() {
           <CardContent className="p-8 text-center flex flex-col items-center justify-center space-y-3">
             <Loader2 className="w-8 h-8 text-rose-500 animate-spin" />
             <div>
-              <h4 className="font-semibold text-base">Generating Optimal Solution</h4>
+              <h4 className="font-semibold text-base">Generating Solution...</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Gemini 3.6 AI is crafting step-by-step intuition, code comments, and Big-O complexity for {language}...
+                Gemini AI is streaming your {language} solution live — it will appear below as it generates.
               </p>
             </div>
           </CardContent>

@@ -96,6 +96,31 @@ export async function generateSolverResponse(prompt: string) {
   throw lastError || new Error('All Gemini AI models failed');
 }
 
+// Streaming version — bypasses Vercel timeout by sending chunks as they arrive
+export async function generateSolverStream(prompt: string) {
+  let lastError: any = null;
+
+  for (const modelName of MODELS) {
+    try {
+      const stream = await genAI.models.generateContentStream({
+        model: modelName,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: {
+          systemInstruction: 'You are an elite DSA Expert and competitive programming coach. Always provide the COMPLETE, fully working code. Never truncate, abbreviate, or stop mid-function.',
+          maxOutputTokens: 16384,
+          temperature: 0.3,
+        },
+      });
+      return stream;
+    } catch (err: any) {
+      console.warn(`[Gemini Stream] Model ${modelName} failed:`, err?.message || err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('All Gemini AI models failed to stream');
+}
+
 export async function generateStructuredJSON(prompt: string) {
   let lastError: any = null;
 
