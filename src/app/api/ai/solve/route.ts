@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIResponse } from '@/lib/gemini';
+import { generateSolverResponse } from '@/lib/gemini';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +35,7 @@ Format your response cleanly in Markdown using EXACTLY these headings IN THIS OR
 ### ⏱️ Complexity Analysis
 ### 🔍 Edge Cases`;
 
-    const reply = await generateAIResponse([{ role: 'user', content: prompt }]);
+    const reply = await generateSolverResponse(prompt);
 
     if (!reply || reply.trim() === '') {
       return NextResponse.json({ error: 'AI generated an empty response. Please try clicking Solve again.' }, { status: 500 });

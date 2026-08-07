@@ -56,7 +56,7 @@ export async function generateAIResponse(messages: { role: string; content: stri
         })),
         config: {
           systemInstruction: SYSTEM_PROMPT + contextMessage,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 16384,
           temperature: 0.7,
         },
       });
@@ -64,6 +64,31 @@ export async function generateAIResponse(messages: { role: string; content: stri
       if (response.text) return response.text;
     } catch (err: any) {
       console.warn(`[Gemini AI] Model ${modelName} failed or rate limited:`, err?.message || err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('All Gemini AI models failed');
+}
+
+export async function generateSolverResponse(prompt: string) {
+  let lastError: any = null;
+
+  for (const modelName of MODELS) {
+    try {
+      const response = await genAI.models.generateContent({
+        model: modelName,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: {
+          systemInstruction: 'You are an elite DSA Expert and competitive programming coach. Always provide complete, fully working code solutions. Never truncate or cut off your response.',
+          maxOutputTokens: 16384,
+          temperature: 0.3,
+        },
+      });
+
+      if (response.text) return response.text;
+    } catch (err: any) {
+      console.warn(`[Gemini Solver] Model ${modelName} failed or rate limited:`, err?.message || err);
       lastError = err;
     }
   }
