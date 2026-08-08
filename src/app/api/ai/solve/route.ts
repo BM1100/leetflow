@@ -58,8 +58,11 @@ Format your response using EXACTLY these sections IN THIS ORDER:
               controller.enqueue(encoder.encode(text));
             }
           }
-        } catch (err) {
-          console.error('[Stream error]', err);
+        } catch (streamErr: any) {
+          // Send error as a visible marker so the frontend can detect it
+          const errMsg = streamErr?.message || 'Stream interrupted';
+          console.error('[Stream mid-error]', errMsg);
+          controller.enqueue(encoder.encode(`\n\n> ⚠️ **Stream interrupted**: ${errMsg}\n> Please click **Try Again**.`));
         } finally {
           controller.close();
         }

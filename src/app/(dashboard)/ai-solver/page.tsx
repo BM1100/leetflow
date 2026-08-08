@@ -59,16 +59,24 @@ function AISolverContent() {
         }),
       });
 
-      // Handle non-streaming error responses (400, 500 with JSON body)
-      const contentType = res.headers.get('content-type') || '';
-      if (!res.ok || contentType.includes('application/json')) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to generate solution');
+      // Handle error responses — safely try JSON first, then fall back to text
+      if (!res.ok) {
+        let errorMsg = `Server error (${res.status}). Please try again.`;
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          try {
+            const text = await res.text();
+            if (text.trim()) errorMsg = text.trim();
+          } catch { /* use default */ }
+        }
+        throw new Error(errorMsg);
       }
 
       if (!res.body) throw new Error('No response stream received. Please try again.');
 
-      // ✅ Stream: read chunks as they arrive and display progressively
+      // Stream: read chunks as they arrive and display progressively
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = '';
@@ -78,7 +86,8 @@ function AISolverContent() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        accumulated += decoder.decode(value, { stream: true });
+        const chunk = decoder.decode(value, { stream: true });
+        accumulated += chunk;
         setSolution(accumulated);
       }
 
@@ -91,6 +100,7 @@ function AISolverContent() {
       setLoading(false);
     }
   }
+
 
   function handleSolve() {
     executeSolve(problemInput, language);
