@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useConnectedUsername } from '@/hooks/use-connected-username';
-import { PageHeader } from '@/components/shared/page-header';
 import { FormattedMarkdown } from '@/components/shared/formatted-markdown';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -140,7 +139,7 @@ export default function AICoachPage() {
 
     const newMsgs: ChatMsg[] = [...messages, { role: 'user', content: text }];
     setMessages(newMsgs);
-    if (!textToSend) setInput('');
+    setInput(''); // Always clear input after sending
     setLoading(true);
 
     try {
@@ -176,29 +175,31 @@ export default function AICoachPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-9.5rem)] min-h-[500px]">
-      <div className="flex items-center justify-between">
-        <PageHeader
-          title="AI Coach"
-          description={
-            username
+    <div className="flex flex-col h-[calc(100vh-7rem)] min-h-[560px]">
+      {/* Header row — title + clear chat button together */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">AI Coach</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {username
               ? `Personalized DSA mentor powered by Gemini AI (@${username})`
-              : 'Personalized DSA mentor powered by Gemini AI'
-          }
-        />
+              : 'Personalized DSA mentor powered by Gemini AI'}
+          </p>
+        </div>
         <Button
           variant="outline"
           size="sm"
           onClick={clearChat}
-          className="text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 gap-1.5 cursor-pointer"
+          className="text-xs text-rose-500 border-rose-500/20 hover:bg-rose-500/10 gap-1.5 cursor-pointer flex-shrink-0"
         >
           <Trash2 className="w-3.5 h-3.5" /> Clear Chat
         </Button>
       </div>
 
-      <div className="flex-1 border rounded-xl bg-card overflow-hidden flex flex-col shadow-xs mt-4 min-h-0">
-        {/* Scrollable Messages List */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 min-h-0">
+      {/* Chat container */}
+      <div className="flex-1 border rounded-xl bg-card overflow-hidden flex flex-col shadow-xs min-h-0">
+        {/* Scrollable Messages */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 min-h-0">
           <div className="space-y-4 max-w-4xl mx-auto">
             {messages.map((msg, idx) => (
               <div
@@ -214,7 +215,7 @@ export default function AICoachPage() {
                 )}
 
                 <div
-                  className={`rounded-xl p-4 max-w-[85%] text-sm leading-relaxed ${
+                  className={`rounded-xl p-3.5 max-w-[85%] text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-rose-500 text-white rounded-br-none'
                       : 'bg-muted/60 border border-border text-foreground rounded-bl-none'
@@ -246,8 +247,8 @@ export default function AICoachPage() {
           </div>
         </div>
 
-        {/* Suggestions Pills */}
-        <div className="p-3 border-t bg-muted/20 overflow-x-auto flex gap-2 no-scrollbar">
+        {/* Suggestion Pills */}
+        <div className="px-3 pt-2 pb-1 border-t bg-muted/20 overflow-x-auto flex gap-2 no-scrollbar">
           {AI_SUGGESTIONS.map((sug) => {
             const IconComponent = ICON_MAP[sug.icon] || Sparkles;
             return (
@@ -270,12 +271,12 @@ export default function AICoachPage() {
             placeholder="Ask AI Coach anything about DSA, concepts, or problem strategies..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
             disabled={loading}
             className="flex-1 bg-background text-sm"
           />
           <Button
-            onClick={() => sendMessage(input)}
+            onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
             className="bg-rose-500 hover:bg-rose-600 text-white shadow-xs cursor-pointer"
           >

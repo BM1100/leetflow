@@ -11,6 +11,29 @@ import {
   AreaChart, Area
 } from 'recharts';
 
+// Custom tooltip so text is never the same color as the bar
+function CustomBarTooltip({ active, payload, label, isDark }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: isDark ? '#1e293b' : '#ffffff',
+        border: '1px solid ' + (isDark ? '#334155' : '#e2e8f0'),
+        borderRadius: 8,
+        padding: '8px 14px',
+        fontSize: 12,
+        color: isDark ? '#f1f5f9' : '#0f172a',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+      }}
+    >
+      <p style={{ fontWeight: 700, marginBottom: 2, color: isDark ? '#f1f5f9' : '#0f172a' }}>{label}</p>
+      <p style={{ color: '#f43f5e', fontWeight: 600 }}>
+        {payload[0].value} <span style={{ color: isDark ? '#94a3b8' : '#64748b', fontWeight: 400 }}>problems solved</span>
+      </p>
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const { username } = useConnectedUsername();
   const { data, isLoading } = useLeetCode(username);
@@ -78,16 +101,7 @@ export default function AnalyticsPage() {
                     tick={{ fontSize: 12, fill: chartTextColor, fontWeight: 600 }}
                     stroke="hsl(var(--border))"
                   />
-                  <Tooltip
-                    contentStyle={{
-                      background: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: 8,
-                      fontSize: 12,
-                      color: chartTextColor,
-                    }}
-                    formatter={(v: any) => [v, 'Problems Solved']}
-                  />
+                  <Tooltip content={<CustomBarTooltip isDark={isDark} />} />
                   <Bar dataKey="solved" fill="#f43f5e" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
